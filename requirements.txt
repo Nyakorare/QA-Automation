@@ -4,4 +4,4 @@ robotframework-requests==0.9.7
 robotframework-faker==5.0.0
 selenium==4.24.0
 webdriver-manager==4.0.2
-
+python-dotenv==1.0.1

@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation    Automation practice robot framework
 Resource         ../../resources/QCe-site.resource
+Suite Setup      Run Keywords    Load Environment    AND    Set All Creds From Env
 Test Setup       Open QA Browser
 Library          SeleniumLibrary
 Library          FakerLibrary
@@ -22,10 +23,10 @@ TC_001 - LPS New Application Applicant Online Process
 TC_001_TS_001 - Login Applicant
     Maybe Select Login Iframe
     Wait Until Page Contains Element    ${email-input}    30s
-    Wait Until Element Is Visible    ${email-input}    30s
-    Input Text    ${email-input}    ${public-applicant}
-    Sleep             1s
+    Wait Until Element Is Visible       ${email-input}    30s
+    Input Text                          ${email-input}    ${public-applicant-email}
+    Sleep                               1s
     Wait Until Page Contains Element    ${email-button}    30s
-    Wait Until Element Is Enabled    ${email-button}    30s
-    Click Button      ${email-button}
-    Sleep             3s
+    Wait Until Element Is Enabled       ${email-button}    30s
+    Click Button                        ${email-button}
+    Sleep                               3s
