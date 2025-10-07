@@ -10,21 +10,6 @@ Library                            FakerLibrary    WITH NAME    Faker
 ${qa_site_public}       https://qaqclb.unifysyscontrol.com/
 ${qa_site_admin}        https://adminqaqclb.unifysyscontrol.com/
 
-#universal accounts (moved to resources/credentials.txt)
-# ${public-applicant}         glenn.intern@yopmail.com
-# ${public-password}          Water123
-
-#LPS accounts (moved to resources/credentials.txt)
-# ${blpd-head}                blpd.head@gmail.com                    p@ssw0rd123
-# ${lld-approver2}            lld.initial_approver2@yopmail.com      P@ssw0rd123
-# ${lld-assessor}             lld.assessment@yopmail.com             P@ssw0rd123
-# ${lld-chief}                lld.evaluatorc@gmail.com               p@ssw0rd123
-# ${lld-evaluator}            lld.evaluator@yopmail.com              P@ssw0rd123
-# ${lld-initial-approver}     lld.initial_approver@gmail.com         p@ssw0rd123
-# ${lld-occular}              lld.inspectora@gmail.com               p@ssw0rd123
-# ${lld-printing}             lld.printing@yopmail.com               P@ssw0rd123
-# ${lld-releasing}            lld.releasing@yopmail.com              P@ssw0rd123
-
 *** Keywords ***
 Load Environment
     # Loads variables from .env into process environment
