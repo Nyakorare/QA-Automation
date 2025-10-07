@@ -8,11 +8,20 @@ venv/
 
 # Environment files
 .env
+.env.*
 
 # Robot Framework outputs
 output.xml
 report.html
 log.html
+results/
+reports/
+
+# OS/IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
 
 # Local testing creds
 LPS/testing-creds.txt
