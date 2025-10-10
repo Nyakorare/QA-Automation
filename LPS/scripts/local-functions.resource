@@ -17,31 +17,9 @@ ${feedback-survey}            xpath=//button[@class='swal2-confirm swal2-styled'
 
 # Mayor's permit elements
 ${error-creation-modal}       xpath=/html/body/div[9]/div/div[3]/button[1]
-${mp-next}                    id=mp-continue
+${mp-next}                    xpath=/html/body/div[3]/div/div[25]/div/div/div[3]/button[2]
 
 *** Keywords ***
-Randomly Select Business Type Checkboxes
-    # List of all available checkbox IDs
-    @{checkbox_list}=    Create List    ${bi-wholesaler}    ${bi-retailer}    ${bi-server_dispenser}    ${manufacturer}    ${bi-amusements}
-    
-    # Generate random number of checkboxes to select (1-4)
-    ${num_to_select}=    Evaluate    random.randint(1, 4)    modules=random
-    
-    # Shuffle the list to randomize selection order
-    ${shuffled_list}=    Evaluate    random.sample($checkbox_list, $num_to_select)    modules=random
-    
-    Log To Console    Selecting ${num_to_select} random checkboxes from available options
-    
-    # Click each selected checkbox
-    FOR    ${checkbox}    IN    @{shuffled_list}
-        Wait Until Element Is Visible    ${checkbox}    10s
-        Click Element    ${checkbox}
-        Sleep    0.5s
-        Log To Console    Selected checkbox: ${checkbox}
-    END
-    
-    Log To Console    Completed random checkbox selection
-
 Handle Feedback Survey
     ${element_exists}=    Run Keyword And Return Status    Wait Until Page Contains Element    ${feedback-survey}    5s
     IF    ${element_exists}
@@ -66,5 +44,23 @@ Handle Mayor Permit Number Confirmation
         Log To Console    Mayor Permit Number Confirmed & Working, continuing...
         Wait Until Element Is Visible       ${mp-next}    5s
         Click Element                       ${mp-next}
-        RETURN    ${True}
+        Sleep                               2s
     END
+
+Randomly Select Business Type Checkboxes
+    # Business Information checkboxes
+    @{checkbox_list}=    Create List    ${bi-wholesaler}    ${bi-retailer}    ${bi-server_dispenser}    ${manufacturer}    ${bi-amusements}
+
+    ${num_to_select}=    Evaluate    random.randint(1, 4)    modules=random
+    ${shuffled_list}=    Evaluate    random.sample($checkbox_list, $num_to_select)    modules=random
+    
+    Log To Console    Selecting ${num_to_select} random checkboxes from available options
+
+    FOR    ${checkbox}    IN    @{shuffled_list}
+        Wait Until Element Is Visible    ${checkbox}    10s
+        Click Element    ${checkbox}
+        Sleep    0.5s
+        Log To Console    Selected checkbox: ${checkbox}
+    END
+    
+    Log To Console    Completed random checkbox selection
