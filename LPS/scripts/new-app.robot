@@ -21,12 +21,15 @@ ${new-application-type}       id=apply_new
 ${proceed-to-next}            id=req-continue
 ${mayors-permit-input}        id=mp_number
 ${proceed-mp}                 xpath=/html/body/div[3]/div/div[24]/div/div/form/div/div[3]/div/button[2]
+${next-continue-details}      id=btn-continue2
+${next-continue-details2}     xpath=//button[@id='btn-continue2' and not(ancestor::div[contains(@style,'display: none')])]
+${next-continue-details3}     xpath=/html/body/div[3]/div/div[2]/div/div/div/form/div/div[2]/div[2]/div/div/div[4]/div/div/div[3]/div[2]/button[2]
 
 # "New" Application Type Button
 ${boss-qa-button}             xpath=//*[@id="nav_bar_list"]/a[4]/button
 
 # Mayor's Permit Number
-${mayors-permit-number-new}   25-990125	    # 19-002724
+${mayors-permit-number-new}   25-990125    # 19-002724
 
 *** Test Cases ***
 TC_001 - LPS Module Process
@@ -38,7 +41,7 @@ TC_001 - LPS Module Process
     TC_001_TS_006 - Create "New" Application Type
     ${can_continue}=    TC_001_TS_007 - Mayor's Permit Number Confirmation
     IF    ${can_continue}
-        TC_001_TS_008 - New Application Form 1st Page (if continues from Mayor's Permit Number Confirmation)
+        TC_001_TS_008 - Complete New Application Form
     ELSE
         Log To Console    Process ended due to Mayor Permit Number error/in use - not continuing to TC_001_TS_008
     END
@@ -122,16 +125,36 @@ TC_001_TS_007 - Mayor's Permit Number Confirmation
     Log To Console                   END: TC_001_TS_007 - Mayor's Permit Number Confirmation
     RETURN    ${can_continue}
 
-TC_001_TS_008 - New Application Form 1st Page (if continues from Mayor's Permit Number Confirmation)
-    Log To Console                   START: TC_001_TS_008 - New Application Form 1st Page
-    Sleep                               2s
+TC_001_TS_008 - Complete New Application Form
+    Log To Console                   START: TC_001_TS_008 - Complete New Application Form
     
-    # Randomly select 1-4 business type checkboxes
+    # Step 1: Business Type Selection (1st Page)
+    Log To Console                   Step 1: Selecting Business Type Checkboxes
     Randomly Select Business Type Checkboxes
-    
-    # Click continue button to proceed to next page
-    Wait Until Element Is Visible       ${first-page-continue}    10s
-    Click Element                       ${first-page-continue}
+    Robust Click                        ${next-continue-details}
     Sleep                               2s
+    Log To Console                   Step 1: Completed Business Type Selection
     
-    Log To Console                   END: TC_001_TS_008 - New Application Form 1st Page
+    # Step 2: Liquor Permit Selection (2nd Page)
+    Log To Console                   Step 2: Selecting Liquor Permit Checkboxes
+    Randomly Select Liquor Permit Checkboxes
+    Sleep                               2s
+    Click First Visible                 ${next-continue-details2}
+    Sleep                               2s
+    Log To Console                   Step 2: Completed Liquor Permit Selection
+    
+    # Step 3: File Uploads (3rd Page)
+    Log To Console                   Step 3: Handling File Uploads
+    Handle File Uploads
+    Sleep                               2s
+    # Use filtered visible continue button (Step 4 is similar to Step 2 visibility handling)
+    Click First Visible                 ${next-continue-details2}
+    Log To Console                   Step 3: Completed File Uploads
+    Log To Console                   END: TC_001_TS_008 - Complete New Application Form
+
+    #Step 4: Applied By
+    Log To Console                   Step 4: Applied By
+    Randomly Select Applied By
+    Sleep                               2s
+    Click First Visible                 ${next-continue-details3}
+    Log To Console                   Step 4: Completed Applied By
