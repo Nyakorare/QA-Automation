@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation    Automation practice robot framework
 Resource         ../../global-resources/QCe-site.resource
+Resource         local-functions.resource
 Suite Setup      Run Keywords    Load Environment    AND    Set All Creds From Env
 Test Setup       Open QA Browser
 Library          SeleniumLibrary
@@ -15,23 +16,17 @@ ${email-button}               id=btn-continue
 ${password-input}             id=input_password
 ${login-button}               id=login-btn
 ${lps-submit-application}     xpath=//button[@class='btn btn-primary btn-lg menu_buttons' and @onclick='open_liquor_permit_module()']
-${feedback-survey}            xpath=//button[@class='swal2-confirm swal2-styled' and text()='OK']
 ${apply-for-application}      xpath=//*[@id="page-content-wrapper"]/div/div/div/div[2]/button
 ${new-application-type}       id=apply_new
 ${proceed-to-next}            id=req-continue
 ${mayors-permit-input}        id=mp_number
-${proceed-mp}                 xpath=/html/body/div[3]/div/div[24]/div/div/form/div/div[3]/div/button[2]    # not used
-${mp-next}                    id=mp-continue
+${proceed-mp}                 xpath=/html/body/div[3]/div/div[24]/div/div/form/div/div[3]/div/button[2]
 
-${modal-show}                 xpath=/html/body/div[9]/div
-${error-creation-modal}       xpath=/html/body/div[9]/div/div[3]/button[1]
-
-# Can be changed to certain button service if needed (currently on BOSS-NEW)
+# "New" Application Type Button
 ${boss-qa-button}             xpath=//*[@id="nav_bar_list"]/a[4]/button
 
 # Mayor's Permit Number
-${mayors-permit-number-new}   19-002724	
-# 25-990125
+${mayors-permit-number-new}   25-990125	    # 19-002724
 
 *** Test Cases ***
 TC_001 - LPS Module Process
@@ -41,22 +36,14 @@ TC_001 - LPS Module Process
     TC_001_TS_004 - Apply for Application
     TC_001_TS_005 - Feedback Survey (If Shows Up)
     TC_001_TS_006 - Create "New" Application Type
-    TC_001_TS_007 - Mayor's Permit Number Confirmation
+    ${can_continue}=    TC_001_TS_007 - Mayor's Permit Number Confirmation
+    IF    ${can_continue}
+        TC_001_TS_008 - New Application Form 1st Page (if continues from Mayor's Permit Number Confirmation)
+    ELSE
+        Log To Console    Process ended due to Mayor Permit Number error/in use - not continuing to TC_001_TS_008
+    END
 
 *** Keywords ***
-
-# Local Functions
-Handle Feedback Survey
-    ${element_exists}=    Run Keyword And Return Status    Wait Until Page Contains Element    ${feedback-survey}    5s
-    IF    ${element_exists}
-        Log To Console    Feedback appeared, continuing...
-        Wait Until Element Is Visible       ${feedback-survey}    5s
-        Sleep                               1s
-        Click Element                       ${feedback-survey}
-        Sleep                               2s
-    ELSE
-        Log To Console    Feedback survey did not appear, continuing...
-    END
 
 # TC_001 - LPS Module Process
 TC_001_TS_001 - Login Applicant
@@ -128,7 +115,23 @@ TC_001_TS_006 - Create "New" Application Type
     
 TC_001_TS_007 - Mayor's Permit Number Confirmation
     Log To Console                   START: TC_001_TS_007 - Mayor's Permit Number Confirmation
-    # Trigger client-side validation
     Click Element                       ${proceed-mp}
+    Sleep                               1s
+    ${can_continue}=    Handle Mayor Permit Number Confirmation
     Sleep                               2s
     Log To Console                   END: TC_001_TS_007 - Mayor's Permit Number Confirmation
+    RETURN    ${can_continue}
+
+TC_001_TS_008 - New Application Form 1st Page (if continues from Mayor's Permit Number Confirmation)
+    Log To Console                   START: TC_001_TS_008 - New Application Form 1st Page
+    Sleep                               2s
+    
+    # Randomly select 1-4 business type checkboxes
+    Randomly Select Business Type Checkboxes
+    
+    # Click continue button to proceed to next page
+    Wait Until Element Is Visible       ${first-page-continue}    10s
+    Click Element                       ${first-page-continue}
+    Sleep                               2s
+    
+    Log To Console                   END: TC_001_TS_008 - New Application Form 1st Page
